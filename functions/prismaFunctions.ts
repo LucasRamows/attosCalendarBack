@@ -46,7 +46,6 @@ async function updateUser(access: number, name?: string, key?: string, email?: s
       data: {
         name: name ? name : undefined,
         key: key ? key : undefined,
-        email: email ? email : undefined,
       }
     });
     return users;
