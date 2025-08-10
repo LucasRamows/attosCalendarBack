@@ -1,10 +1,8 @@
 //imports
 import express from "express";
-import createUser from "./functions/createUser";
-import getAllUsers from "./functions/getAllUsers";
+import {createUser, getAllUsers, getUser, deleteUser, createTask, updateUser} from "./functions/prismaFunctions";
+
 import { PrismaClient } from "@prisma/client";
-import getUser from "./functions/getUser";
-import deleteUser from "./functions/deleteUser";
 
 //consts
 const prisma = new PrismaClient();
@@ -15,9 +13,16 @@ app.use(express.json());
 
 //routes
 app.post("/create-user", async (req, res) => {
-  const { name, access, key } = req.body;
-  const user = await createUser(name, access, key);
+  const { name, access, key, email } = req.body;
+  const user = await createUser(name, access, key, email);
   res.json(user);
+});
+
+app.post("/create-task", async (req, res) => {
+  let { name, userId, date, description } = req.body;
+  date = new Date(date);
+  const task = await createTask(name, date, description, userId);
+  res.json(task);
 });
 
 app.get("/get-users", async (_, res) => {
@@ -31,10 +36,20 @@ app.get("/get-user", async (req, res) => {
   res.json(user);
 });
 
+app.put("/update-user/:access", async (req, res) => {
+  const access = parseInt(req.params.access as string, 10);
+  const {name, email, key} = req.body;
+  const user = updateUser(access,
+    name ? name : undefined,
+    key ? key : undefined,
+    email ? email : undefined
+  );
+  res.json(user);
+});
+
 app.delete("/delete/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const user = await deleteUser(id);
-
   res.json(user);
 });
 
