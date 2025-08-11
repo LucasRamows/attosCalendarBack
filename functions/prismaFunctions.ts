@@ -1,18 +1,35 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
+
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = process.env.JWT_SECRET_KEY || "null"
 
 const prisma = new PrismaClient();
 
-async function createUser(name: string, access: number, key: string, email: string) {
+async function createUser(name: string, access: number, key: string, email: string, role?: string) {
   const user = await prisma.user.create({
-    data: { name: name, access: access, key: key, email: email },
+    data: { name: name, access: access, key: key, email: email, role: (role === "ADMIN" ? Role.ADMIN : Role.USER) },
   });
   return (user);
+}
+
+async function loginUser(access: number, key: string) {
+  const user = await prisma.user.findUnique({
+    where: { access: access },
+  });
+
+  const log = user && user.key === key ? {
+    token: jwt.sign({ access: access, role: user.role, id: user.id }, SECRET_KEY)
+  } : {}
+
+  return (log);
 }
 
 // Exemplo de como a função createTask deveria ser
 async function createTask(name: string, date: Date, description: string, userId: string) {
   const task = await prisma.task.create({
     data: {
+
       name: name,
       date: date,
       description: description,
@@ -28,6 +45,12 @@ async function getUser(access: number) {
   return (user)
 }
 
+async function getTask(id: number) {
+  const task = await prisma.task.findUnique({ where: { id: id } })
+  return (task)
+
+}
+
 
 async function getAllUsers() {
   try {
@@ -39,25 +62,50 @@ async function getAllUsers() {
   }
 }
 
-async function updateUser(access: number, name?: string, key?: string, email?: string) {
+async function updateUser(access: number, name?: string, key?: string, email?: string, task?: string) {
   try {
     const users = await prisma.user.update({
       where: { access: access },
       data: {
         name: name ? name : undefined,
         key: key ? key : undefined,
+        email: email ? email : undefined,
+        task: task ? { connect: { id: parseInt(task) } } : undefined,
       }
     });
-    return users;
+    return "Atualização realizada com sucesso";
   } catch (error) {
     console.error("Erro ao atualizar usuários:", error);
     throw error;
   }
 }
 
+async function updateTask(id: number, name?: string, description?: string, date?: Date, isPriority?: boolean, status?: boolean) {
+  try {
+    const tasks = await prisma.task.update({
+      where: { id: id },
+      data: {
+        name: name ? name : undefined,
+        description: description ? description : undefined,
+        date: date ? date : undefined,
+        status: status ? status : undefined,
+        isPrioriry: isPriority ? isPriority : undefined,
+      }
+    },
+  );
+  return tasks;
+  } catch (error) {
+    console.error("Erro ao atualizar tarefas:", error);
+    throw error;
+  }
+}
+
+
 async function deleteUser(access: number) {
+
+
   const user = await prisma.user.delete({ where: { access: access } })
 
   return (user)
 }
-export { createUser, getUser, getAllUsers, deleteUser, createTask, updateUser };
+export { createUser, getUser, getAllUsers, deleteUser, createTask, updateUser, loginUser, updateTask, getTask };
