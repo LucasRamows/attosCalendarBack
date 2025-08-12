@@ -15,6 +15,7 @@ router.post("/create-user", async (req, res) => {
 });
 
 router.post("/login-user", async (req, res) => {
+  console.log("login")
   const { access, key} = req.body;
   const user = await loginUser( access, key);
   res.json(user);

@@ -1,5 +1,6 @@
 import express from "express";
 import { createTask, getAllUsers, getUser, deleteUser, updateUser } from "../functions/prismaFunctions";
+import { stringify } from "querystring";
 
 //consts
 const router = express.Router();
@@ -19,9 +20,16 @@ router.delete("/delete/:id", async (req, res) => {
     }
 });
 
-router.get("/get-users", async (_, res) => {
-    const result = await getAllUsers();
-    res.json(result);
+router.get("/get-users", async (req, res) => {
+    const token = req.user;
+    if (token?.role === "ADMIN"){
+        const result = await getAllUsers();
+        res.json(result);
+    }else{
+        res.json("Acesso não permitido");
+
+    }
+    
 });
 
 export default router;

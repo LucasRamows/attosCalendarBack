@@ -21,6 +21,12 @@ router.get("/get-user", async (req, res) => {
     res.json(user);
 });
 
+router.get("/get-task", async (req, res) => {
+    const id = parseInt(req.query.id as string, 10);
+    const task = await getTask(id);
+    res.json(task);
+});
+
 
 router.put("/update-user/:access", async (req, res) => {
     const access = parseInt(req.params.access as string, 10);
