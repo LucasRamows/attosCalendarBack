@@ -18,9 +18,9 @@ router.use(express.json());
 
 //routes
 router.post("/create-task", async (req, res) => {
-  let { name, date, description, isPriority } = req.body;
+  let { name, date, description, isPriority, remaining } = req.body;
   const userId = req.user?.id;
-  const task = await createTask(name, date, description, isPriority, userId);
+  const task = await createTask(name, date, remaining, description, isPriority, userId);
   res.json(task);
 });
 

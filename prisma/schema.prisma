@@ -25,6 +25,7 @@ model Task {
   name String
   isPriority Boolean @default(false)
   date String
+  remaining String
   description String
   status Boolean @default(true)
   createAt DateTime @default(now())

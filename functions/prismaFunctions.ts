@@ -40,7 +40,7 @@ async function loginUser(access: number, key: string) {
           ),
           user: { name: user.name, role: user.role },
         }
-      : {};
+      : (() => { throw new Error("Usuário inválido ou chave incorreta"); })();
 
   return log;
 }
@@ -49,6 +49,7 @@ async function loginUser(access: number, key: string) {
 async function createTask(
   name: string,
   date: string,
+  remaining: string,
   description: string,
   isPriority: boolean,
   userId: string
@@ -58,6 +59,7 @@ async function createTask(
       name: name,
       date: date,
       description: description,
+      remaining: remaining,
       status: false, 
       userId: userId, 
       isPriority: isPriority,
