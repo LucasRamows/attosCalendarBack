@@ -35,8 +35,10 @@ async function loginUser(access: number, key: string) {
       ? {
           token: jwt.sign(
             { access: access, role: user.role, id: user.id },
-            SECRET_KEY
+            SECRET_KEY,
+            { expiresIn: "1d" }
           ),
+          user: { name: user.name, role: user.role },
         }
       : {};
 
@@ -48,6 +50,7 @@ async function createTask(
   name: string,
   date: string,
   description: string,
+  isPriority: boolean,
   userId: string
 ) {
   const task = await prisma.task.create({
@@ -55,8 +58,10 @@ async function createTask(
       name: name,
       date: date,
       description: description,
-      status: false, // status pode ter um valor padrão como false
-      userId: userId, // Passe o id do usuário aqui
+      status: false, 
+      userId: userId, 
+      isPriority: isPriority,
+      
     },
   });
   return task;
@@ -123,7 +128,7 @@ async function updateTask(
       where: { id: id },
       data: {
         status: status,
-        isPrioriry: isPriority,
+        isPriority: isPriority,
         name: name ? name : undefined,
         description: description ? description : undefined,
         date: date ? date : undefined,

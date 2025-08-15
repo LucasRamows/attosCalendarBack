@@ -1,7 +1,6 @@
 import express from "express";
 import {
   createTask,
-  getAllUsers,
   getUser,
   deleteUser,
   updateUser,
@@ -19,9 +18,9 @@ router.use(express.json());
 
 //routes
 router.post("/create-task", async (req, res) => {
-  let { name, date, description } = req.body;
+  let { name, date, description, isPriority } = req.body;
   const userId = req.user?.id;
-  const task = await createTask(name, date, description, userId);
+  const task = await createTask(name, date, description, isPriority, userId);
   res.json(task);
 });
 
@@ -45,7 +44,7 @@ router.get("/get-tasks", async (req, res) => {
 
 router.put("/update-user/:access", async (req, res) => {
   const access = parseInt(req.params.access as string, 10);
-  const { name, email, key, isPrioriry } = req.body;
+  const { name, email, key, isPriority } = req.body;
   const user = updateUser(
     access,
     name ? name : undefined,
@@ -104,11 +103,11 @@ router.delete("/delete-task/:id", async (req, res) => {
     res.json(task);
   }
 });
-router.delete("/self-delete/:id", async (req, res) => {
-  const access = (await req.user) || { access: 0 };
+router.delete("/self-delete", async (req, res) => {
+  const access = (req.user);
 
   try {
-    const user = await deleteUser(parseInt(access.access));
+    const user = await deleteUser(parseInt(access?.access));
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: "Erro ao deletar usuário" });
