@@ -9,8 +9,8 @@ router.use(express.json());
 
 //routes
 router.post("/create-user", async (req, res) => {
-  const { name, access, key, email, role } = req.body;
-  const user = await createUser(name, access, key, email, role);
+  const { name, access, key, email, phone, role } = req.body;
+  const user = await createUser(name, access, key, email, phone, role);
   res.json(user);
 });
 

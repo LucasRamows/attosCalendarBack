@@ -1,6 +1,7 @@
 import { PrismaClient, Role } from "@prisma/client";
 
 import jwt from "jsonwebtoken";
+import setRemainder from "./setReminder";
 
 const SECRET_KEY = process.env.JWT_SECRET_KEY || "null";
 
@@ -11,6 +12,7 @@ async function createUser(
   access: number,
   key: string,
   email: string,
+  phone: string,
   role?: string
 ) {
   const user = await prisma.user.create({
@@ -19,6 +21,7 @@ async function createUser(
       access: access,
       key: key,
       email: email,
+      phone: phone,
       role: role === "ADMIN" ? Role.ADMIN : Role.USER,
     },
   });
@@ -34,7 +37,7 @@ async function loginUser(access: number, key: string) {
     user && user.key === key
       ? {
           token: jwt.sign(
-            { access: access, role: user.role, id: user.id },
+            { access: access, role: user.role, id: user.id, phone: user.phone },
             SECRET_KEY,
             { expiresIn: "1d" }
           ),
@@ -52,7 +55,8 @@ async function createTask(
   remaining: string,
   description: string,
   isPriority: boolean,
-  userId: string
+  userId: string,
+  phone: string
 ) {
   const task = await prisma.task.create({
     data: {
@@ -66,6 +70,16 @@ async function createTask(
       
     },
   });
+
+  if (task){
+    await setRemainder(
+      date,
+      remaining,
+      name,
+      phone,
+      task.id
+    );
+  }
   return task;
 }
 

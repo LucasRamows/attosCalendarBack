@@ -20,7 +20,8 @@ router.use(express.json());
 router.post("/create-task", async (req, res) => {
   let { name, date, description, isPriority, remaining } = req.body;
   const userId = req.user?.id;
-  const task = await createTask(name, date, remaining, description, isPriority, userId);
+  const phone = req.user?.phone;
+  const task = await createTask(name, date, remaining, description, isPriority, userId, phone);
   res.json(task);
 });
 
