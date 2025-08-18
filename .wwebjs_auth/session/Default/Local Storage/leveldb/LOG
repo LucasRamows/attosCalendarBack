@@ -1,6 +1,0 @@
-2025/08/16-15:14:36.828 cf3f Reusing MANIFEST /home/lucasramows/Documentos/AttosCalendar/attosCalendarBack/.wwebjs_auth/session/Default/Local Storage/leveldb/MANIFEST-000001
-2025/08/16-15:14:36.831 cf3f Recovering log #4
-2025/08/16-15:14:36.964 cf3f Reusing old log /home/lucasramows/Documentos/AttosCalendar/attosCalendarBack/.wwebjs_auth/session/Default/Local Storage/leveldb/000004.log 
-2025/08/16-15:23:38.618 d335 Level-0 table #8: started
-2025/08/16-15:23:38.657 d335 Level-0 table #8: 12604 bytes OK
-2025/08/16-15:23:38.735 d335 Delete type=0 #4
