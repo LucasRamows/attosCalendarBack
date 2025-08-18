@@ -22,7 +22,8 @@ const getReminder = async (list: any) => {
                 data.getFullYear() === today.getFullYear()
             ) {
                 console.log(`Enviando lembrete para ${phone}: ${name}`);
-                await sendMessage(phone, name);
+                const message = `${id} - Lembrete: ${name} `;
+                await sendMessage(phone, message);
 
                 if (dates.length > 1) {
                     dates.shift();

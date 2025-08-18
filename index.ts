@@ -5,6 +5,7 @@ import privateRoutes from "./routes/private";
 import adminRoutes from "./routes/admin";
 import auth from "./middleware/auth";
 import cors from "cors";
+import Reminder from "./wtzpweb/reminder";
 //import jwt from "jsonwebtoken";
 
 //consts
@@ -23,3 +24,5 @@ app.use("/", auth, adminRoutes);
 app.listen(3000, () => {
   console.log("Servidor rodando em http://localhost:3000");
 });
+
+Reminder();

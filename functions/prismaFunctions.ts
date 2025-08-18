@@ -140,6 +140,7 @@ async function updateTask(
   date?: string,
 ) {
   try {
+    console.log("tentando");
     const tasks = await prisma.task.update({
       where: { id: id },
       data: {

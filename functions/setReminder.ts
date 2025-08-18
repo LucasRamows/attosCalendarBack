@@ -12,13 +12,14 @@ const setRemainder = async (data: string, remaining: string, name: string, phone
 
     for (let i = 1; i <= quantidade; i++) {
         const reminder = new Date(dataFinal);
-        reminder.setDate(dataFinal.getDate() - taxaAviso * i);
+        reminder.setDate(dataFinal.getDate() - i);
 
         const diaFormat = reminder.getDate().toString().padStart(2, '0');
         const mesFormat = (reminder.getMonth() + 1).toString().padStart(2, '0');
         const anoFormat = reminder.getFullYear();
-
-        reminders.push(`${diaFormat}/${mesFormat}/${anoFormat}`);
+        for (let i = 1; i <= taxaAviso; i++){
+            reminders.push(`${diaFormat}/${mesFormat}/${anoFormat}`);
+        }
     }
 
     return reminders;

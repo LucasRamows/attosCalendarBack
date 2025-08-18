@@ -1,25 +1,27 @@
 import { Client, LocalAuth } from "whatsapp-web.js";
+import { updateTask } from "../functions/prismaFunctions";
+import deleteReminder from "../functions/deleteReminder";
 const qrcode = require('qrcode-terminal');
-
-// Inicializar client com LocalAuth
+interface QuotedMessage {
+    body: string;
+    type: string;
+    kind?: string;
+}
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] } // útil para servidores Linux
 });
 
-// Exibir QR code se necessário
 client.on('qr', (qr: string) => {
     qrcode.generate(qr, { small: true });
 });
 
-// Indicar quando o client está pronto
 let clientReady = false;
 client.on('ready', () => {
     console.log('Client is ready!');
     clientReady = true;
 });
 
-// Função para enviar mensagem, espera client estar pronto
 const waitClientReady = () => {
     return new Promise<void>((resolve) => {
         if (clientReady) resolve();
@@ -30,7 +32,7 @@ const waitClientReady = () => {
 const sendMessage = async (phone: string, message: string) => {
     await waitClientReady();
     const formattedPhone = "55" + phone.replace(/\D/g, '') + "@c.us";
-    const formattedMessage = "Lembrete: " + message;
+    const formattedMessage = `${message}`;
 
     try {
         console.log(formattedPhone)
@@ -42,15 +44,31 @@ const sendMessage = async (phone: string, message: string) => {
 };
 
 
-// Exemplo de resposta a mensagens
-client.on('message', (msg) => {
-    console.log(msg.from, msg.body);
-    if (msg.body === '!ping') {
-        msg.reply('pong');
+client.on('message', async (msg: any) => {
+    console.log('Mensagem recebida:', msg.body);
+    if (msg.hasQuotedMsg) {
+        console.log(msg._data.quotedMsg.body);
+        if (msg.body === "#ok") {
+            const id = parseInt(msg._data.quotedMsg.body.split(" -")[0])
+            console.log(id);
+            const status = true;
+            const isPriority = false;
+            const task = await updateTask(
+                id,
+                status,
+                isPriority
+            );
+            deleteReminder(id);
+        } else {
+            client.sendMessage(msg.from, "Se deseja finalizar uma tarefa, responda o lembrente com #ok, ou se deseja criar uma nova, envie uma #nova/descrição/data/lembrete");
+
+        }
+
+    } else {
+        client.sendMessage(msg.from, "Se deseja finalizar uma tarefa, responda o lembrente com #ok, ou se deseja criar uma nova, envie uma #nova/descrição/data/lembrete");
     }
 });
 
-// Inicializa o client
 client.initialize();
 
 export { sendMessage };
