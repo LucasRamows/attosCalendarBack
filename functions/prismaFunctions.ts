@@ -39,7 +39,7 @@ async function loginUser(access: number, key: string) {
           token: jwt.sign(
             { access: access, role: user.role, id: user.id, phone: user.phone },
             SECRET_KEY,
-            { expiresIn: "1d" }
+            { expiresIn: "2d" }
           ),
           user: { name: user.name, role: user.role },
         }
@@ -88,6 +88,10 @@ async function getUser(access: number) {
   return user;
 }
 
+async function getIdByPhone(phone: string) {
+  const user = await prisma.user.findUnique({ where: { phone: phone } });
+  return (user?.id);
+}
 async function getTask(id: number) {
   const task = await prisma.task.findUnique({ where: { id: id} });
   return task;
@@ -181,4 +185,5 @@ export {
   getTask,
   getTasks,
   deleteTask,
+  getIdByPhone,
 };

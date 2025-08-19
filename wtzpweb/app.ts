@@ -1,5 +1,5 @@
 import { Client, LocalAuth } from "whatsapp-web.js";
-import { updateTask } from "../functions/prismaFunctions";
+import { createTask, getIdByPhone, updateTask } from "../functions/prismaFunctions";
 import deleteReminder from "../functions/deleteReminder";
 const qrcode = require('qrcode-terminal');
 interface QuotedMessage {
@@ -60,13 +60,34 @@ client.on('message', async (msg: any) => {
             );
             deleteReminder(id);
         } else {
-            client.sendMessage(msg.from, "Se deseja finalizar uma tarefa, responda o lembrente com #ok, ou se deseja criar uma nova, envie uma #nova/descrição/data/lembrete");
+            client.sendMessage(msg.from, "Se deseja finalizar uma tarefa, responda o lembrente com #ok, ou se deseja criar uma nova, envie uma #n-descrição-data-lembrete");
 
         }
 
-    } else {
+    } else if (msg.body.split("")[0] === "#") {
+        if (msg.body.split("-")[0] === "#n") {
+            const formattedPhone = msg.from.split("@")[0].replace(/^(\d{2})/, "");
+            const taskName = msg.body.split("-")[1];
+            const taskDate = msg.body.split("-")[2];
+            const reminder = msg.body.split("-")[3];
+            const id = await getIdByPhone(formattedPhone);
+
+            try {
+                const createdTask = await createTask(taskName,
+                    taskDate,
+                    reminder,
+                    "desc",
+                    false,
+                    id?id:"",
+                    formattedPhone)
+            } catch (error) {
+                console.log("erro")
+            }
+        }
+    } else{
         client.sendMessage(msg.from, "Se deseja finalizar uma tarefa, responda o lembrente com #ok, ou se deseja criar uma nova, envie uma #nova/descrição/data/lembrete");
     }
+
 });
 
 client.initialize();
