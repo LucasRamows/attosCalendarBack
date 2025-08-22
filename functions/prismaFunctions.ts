@@ -2,6 +2,7 @@ import { PrismaClient, Role } from "@prisma/client";
 
 import jwt from "jsonwebtoken";
 import setRemainder from "./setReminder";
+import deleteReminder from "./deleteReminder";
 
 const SECRET_KEY = process.env.JWT_SECRET_KEY || "null";
 
@@ -144,7 +145,6 @@ async function updateTask(
   date?: string,
 ) {
   try {
-    console.log("tentando");
     const tasks = await prisma.task.update({
       where: { id: id },
       data: {
@@ -155,6 +155,9 @@ async function updateTask(
         date: date ? date : undefined,
       },
     });
+    if (tasks.status){
+      deleteReminder(tasks.id)
+    }
     return tasks;
   } catch (error) {
     console.error("Erro ao atualizar tarefas:", error);

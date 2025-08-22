@@ -10,7 +10,7 @@ const setRemainder = async (data: string, remaining: string, name: string, phone
     const dataFinal = new Date(ano, mes, dia);
     const reminders: string[] = [];
 
-    for (let i = 1; i <= quantidade; i++) {
+    for (let i = 0; i <= quantidade; i++) {
         const reminder = new Date(dataFinal);
         reminder.setDate(dataFinal.getDate() - i);
 

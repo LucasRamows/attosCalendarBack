@@ -8,15 +8,15 @@ const Reminder = async () => {
         const now = new Date()
         const time = now.getHours()
 
-        if (time - 3 > 7 && time - 3 < 21) {
-            const dataList = await readFIle('./wtzpweb/reminderList.txt');
+        if (time - 3 > 7 && time - 3 < 21){
+        const dataList = await readFIle('./wtzpweb/reminderList.txt');
 
-            if (dataList && dataList.toString().trim() !== "") {
-                const list = dataList.toString().split(/\r?\n/);
-                await clearFile('./wtzpweb/reminderList.txt');
-                await getReminder(list);
-            }
+        if (dataList && dataList.toString().trim() !== "") {
+            const list = dataList.toString().split(/\r?\n/);
+            await clearFile('./wtzpweb/reminderList.txt');
+            await getReminder(list);
         }
+}
         setTimeout(run, 1000 * 60 * 60 * 2);
     };
 
