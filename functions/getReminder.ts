@@ -31,7 +31,16 @@ const getReminder = async (list: any) => {
                     const txtAdd = newData.join('$#') + "\n";
                     await txtWriteFunction('./wtzpweb/tempList.txt', txtAdd);
                 }
-            }else {
+            } else if (data.getDate() <= today.getDate() &&
+                data.getMonth() <= today.getMonth() &&
+                data.getFullYear() <= today.getFullYear()) {
+                if (dates.length > 1) {
+                    dates.shift();
+                    const newData = [dates.join(", "), name, phone, id];
+                    const txtAdd = newData.join('$#') + "\n";
+                    await txtWriteFunction('./wtzpweb/tempList.txt', txtAdd);
+                }
+            } else {
                 const newData = [dateStr, name, phone, id];
                 const txtAdd = newData.join('$#') + "\n";
                 await txtWriteFunction('./wtzpweb/tempList.txt', txtAdd);
@@ -42,7 +51,7 @@ const getReminder = async (list: any) => {
         await clearFile('./wtzpweb/tempList.txt');
     }
 
-    return; 
+    return;
 };
 
 export default getReminder;
